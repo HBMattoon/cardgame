@@ -1,7 +1,10 @@
 const express = require('express');
 const path = require('path');
 
-const port = process.env.PORT || 3000;
+//temp testing purposes only
+const Deck  = require('./classes/deck.js')
+
+const port = process.env.PORT || 4000;
 
 const app = express();
 

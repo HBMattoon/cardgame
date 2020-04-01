@@ -1,0 +1,16 @@
+[
+  {
+    "cardsById":{
+      "001":{
+        "name":"CoolCard",
+        "art": "",
+        "type": "creature",
+        "id": "001",
+        "attack": 2,
+        "defence": 2,
+        "keywords": ["alpha", "beta"],
+        "abilities":[]
+      }
+    }
+  }
+]

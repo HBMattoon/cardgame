@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start":"webpack & node server/index.js",
+    "start": "webpack & node server/index.js",
     "start:dev": "nodemon server/index.js",
     "build": "webpack",
     "build:dev": "webpack -w"
