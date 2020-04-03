@@ -1,13 +1,14 @@
 //generate a deck of the cards class based of of stored info (not sure how yet...)
 let cardList = require('./../../tempCardList.json');
-const {Card, CreatureCard} = require('./card.js');
+const {Card, CreatureCard, ActionCard} = require('./card.js');
 
 class Deck {
-  constructor(cardArray, name, id){
+  constructor(cardArray, name, id, owner){
     this.cardArray = cardArray,
     this.name = name,
     this.id = id,
     this.deckList = []
+    this.owner = owner;
   }
 
   genDeck(){
@@ -35,25 +36,57 @@ class Deck {
     let producedCard;
     if(card){
       if(card.type === 'creature'){
-        producedCard = new CreatureCard(card.name, card.art, card.type, card.id, card.attack, card.defence, card.keywords, card.abilities)
+        producedCard = new CreatureCard(card.name, card.art, card.type, card.id, this.owner, card.attack, card.defence, card.keywords, card.abilities)
       } else if(card.type === 'action'){
-        //do thing TODO
-        producedCard = 'there was an issue';
+        producedCard = new ActionCard(card.name, card.art, card.type, card.id, this.owner, card.abilities)
       }
+    } else {
+      //TODO handle case: card does not exist
     }
-
     return producedCard;
   }
+
+  //todo: research better shuffling methods
+  shuffleDeck(){
+    console.log('shuffling...\n');
+    let myArr = this.deckList;
+    let result = [];
+    while(myArr.length > 0){
+      let i = Math.floor(Math.random() * myArr.length)
+      result.push(myArr[i]);
+      myArr.splice(i, 1);
+    }
+    this.deckList = result
+
+  }
+
+  logCards(){
+    this.deckList.map(card => {
+      console.log(card.name);
+    })
+    console.log('\n')
+  }
+
+  draw(){
+    return this.deckList.pop();
+  }
+
+
 }
 
-//tests
+//test junk (delete later)
 const myCardIds = [
   ['001',4],
-  ['001',5]
+  ['002',5]
 ]
-const myDeck = new Deck(myCardIds, 'coolDeck', '002')
+const myDeck = new Deck(myCardIds, 'coolDeck', '002', "mr hen")
 myDeck.genDeck();
-console.log(myDeck.deckList)
+myDeck.logCards();
+myDeck.shuffleDeck();
+myDeck.logCards();
+myDeck.draw();
+myDeck.logCards();
+//tests over
 
 module.exports = {
   Deck

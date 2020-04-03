@@ -10,6 +10,13 @@
         "defence": 2,
         "keywords": ["alpha", "beta"],
         "abilities":[]
+      },
+      "002":{
+        "name":"awsomeCard",
+        "art": "",
+        "type": "action",
+        "id": "002",
+        "abilities":["do cool thing"]
       }
     }
   }
