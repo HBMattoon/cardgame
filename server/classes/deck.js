@@ -11,6 +11,8 @@ class Deck {
     this.owner = owner;
   }
 
+  //TODO look into storing deck list in db, and get rid of cardArray and just use deck id
+
   genDeck(){
     //card array will be array of touples, [[cardId, cardAmount]]
     const cards = this.cardArray;
@@ -22,6 +24,7 @@ class Deck {
     }
   }
 
+  //TODO update once cards are stored in db
   verifyCardExists(cardId){
     const card = cardList[0].cardsById[cardId];
     if(card){
