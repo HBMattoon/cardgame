@@ -3,8 +3,7 @@ let cardList = require('./../../tempCardList.json');
 const {Card, CreatureCard, ActionCard} = require('./card.js');
 
 class Deck {
-  constructor(cardArray, name, id, owner){
-    this.cardArray = cardArray,
+  constructor(name, id, owner){
     this.name = name,
     this.id = id,
     this.deckList = []
@@ -13,40 +12,72 @@ class Deck {
 
   //TODO look into storing deck list in db, and get rid of cardArray and just use deck id
 
-  genDeck(){
-    //card array will be array of touples, [[cardId, cardAmount]]
-    const cards = this.cardArray;
-    for(let x = 0; x < cards.length; x++){
-      for(let y = 0; y < cards[x][1]; y++){
-        let newCard = this.cardFactory(cards[x][0]);
-        this.deckList.push(newCard);
+  genCardArray(deckId){
+    return new Promise((res, err)=> {
+      const cardArr = cardList[0].decksById[deckId];
+      if(cardArr){
+        res(cardArr)
+      } else {
+        err('deck does not exist')
       }
-    }
+    });
+  }
+
+
+  //this looks super ugly, fix it
+  genDeck(){
+
+    return new Promise((res, err) => {
+      this.genCardArray(this.id)
+      .then(async(cardArr) => {
+        const loop = async () => {
+          for(let i = 0; i < cardArr.length; i++){
+            for(let j = 0; j < cardArr[i][1]; j++){
+
+              await this.verifyCardExists(cardArr[i][0])
+              .then(card => this.cardFactory(card))
+              .then(newCard => this.deckList.push(newCard))
+              .catch(errMsg => {
+                err('error 001: ', errMsg);
+              })
+
+            }
+          }
+        }
+        await loop();
+        res(this.deckList);
+      })
+      .catch(msg => {
+        err('error 002: ', msg);
+      })
+    })
   }
 
   //TODO update once cards are stored in db
   verifyCardExists(cardId){
-    const card = cardList[0].cardsById[cardId];
-    if(card){
-      return card;
-    } else {
-      return undefined;
-    }
+    return new Promise((res, err)=> {
+      const cardObj = cardList[0].cardsById[cardId];
+      //console.log(cardObj);
+      if(cardObj){
+        res(cardObj)
+      } else {
+        err('card does not exist')
+      }
+    });
   }
 
-  cardFactory(cardId){
-    const card = this.verifyCardExists(cardId)
-    let producedCard;
-    if(card){
+  cardFactory(card){
+    return new Promise((res, err) => {
+      let producedCard;
       if(card.type === 'creature'){
         producedCard = new CreatureCard(card.name, card.art, card.type, card.id, this.owner, card.attack, card.defence, card.keywords, card.abilities)
       } else if(card.type === 'action'){
         producedCard = new ActionCard(card.name, card.art, card.type, card.id, this.owner, card.abilities)
+      } else {
+        err('card Type Does Not Exist')
       }
-    } else {
-      //TODO handle case: card does not exist
-    }
-    return producedCard;
+      res(producedCard);
+    });
   }
 
   //todo: research better shuffling methods
@@ -77,19 +108,19 @@ class Deck {
 
 }
 
-//test junk (delete later)
-const myCardIds = [
-  ['001',4],
-  ['002',5]
-]
-const myDeck = new Deck(myCardIds, 'coolDeck', '002', "mr hen")
-myDeck.genDeck();
-myDeck.logCards();
-myDeck.shuffleDeck();
-myDeck.logCards();
-myDeck.draw();
-myDeck.logCards();
-//tests over
+// //test junk (delete later)
+// const myCardIds = [
+//   ['001',4],
+//   ['002',5]
+// ]
+// const myDeck = new Deck('coolDeck', '002', "mr hen")
+// myDeck.genDeck()
+// .then(() => {
+//   myDeck.shuffleDeck();
+//   myDeck.logCards();
+// })
+
+
 
 module.exports = {
   Deck
